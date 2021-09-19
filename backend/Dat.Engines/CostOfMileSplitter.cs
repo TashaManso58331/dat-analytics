@@ -4,7 +4,7 @@ namespace Dat.Engines
 {
     public class CostOfMileSplitter : BaseSplitter
     {
-        public const decimal cMinTrip = 300m;
+        public const decimal cMinTrip = 30m;
 
         public override string Name => nameof(CostOfMileSplitter);
 
