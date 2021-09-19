@@ -1,4 +1,5 @@
 ﻿using Dat.Model.Offer;
+using Newtonsoft.Json;
 
 namespace Dat.Engines
 {
@@ -8,8 +9,9 @@ namespace Dat.Engines
 
         public Root Split(Root sourceData)
         {
-            sourceData.matchDetails.RemoveAll(c=>c.rate <= 0);
-            return sourceData;
+            var copy = JsonConvert.DeserializeObject<Root>(JsonConvert.SerializeObject(sourceData));
+            copy.matchDetails.RemoveAll(c=>c.rate <= 0);
+            return copy;
         }
     }
 }

@@ -19,27 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dat.Test.Utils", "Dat.Test.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAnalyticsEngine", "DataAnalyticsEngine\DataAnalyticsEngine.csproj", "{AA9B7022-7EF3-4D11-B501-EF2C1FA7EB3F}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "app-name", "app-name\", "{64117331-6E27-475F-B024-905760EAD874}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_50967"
-		Debug.AspNetCompiler.PhysicalPath = "app-name\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50967\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_50967"
-		Release.AspNetCompiler.PhysicalPath = "app-name\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50967\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "50967"
-		SlnRelativePath = "app-name\"
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
