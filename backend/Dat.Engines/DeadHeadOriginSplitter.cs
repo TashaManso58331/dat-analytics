@@ -4,7 +4,7 @@ using System;
 namespace Dat.Engines
 {
     public class DeadHeadOriginSplitter : BaseSplitter
-    {
+    {       
         public override string Name => nameof(DeadHeadOriginSplitter);
 
         public override decimal CalcWeight(MatchDetail c)

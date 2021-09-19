@@ -4,9 +4,13 @@ namespace Dat.Engines
 {
     public class TotalCostSplitter : BaseSplitter
     {
+        public const decimal cMinCost = 999m;
+
         private readonly decimal MinCost;
 
         public override string Name => nameof(TotalCostSplitter);
+
+        public TotalCostSplitter() : this(cMinCost) { }
 
         public TotalCostSplitter(decimal minCost)
         {

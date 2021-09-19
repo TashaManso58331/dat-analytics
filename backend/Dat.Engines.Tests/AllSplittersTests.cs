@@ -19,7 +19,7 @@ namespace Dat.Engines.Tests
                 new Dat.Engines.PrepareSplitter(),
                 new CostOfMileSplitter(),
                 new StateSplitter(states),
-                new TotalCostSplitter(500),
+                new TotalCostSplitter(),
                 new TotalWeightSplitter(),
                 new DeadHeadOriginSplitter(),
                 new PostSetterSplitter()

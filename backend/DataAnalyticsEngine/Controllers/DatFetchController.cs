@@ -31,7 +31,7 @@ namespace DataAnalyticsEngine.Controllers
                 new PrepareSplitter(),
                 new CostOfMileSplitter(),
                 new StateSplitter(datStates),
-                new TotalCostSplitter(500),
+                new TotalCostSplitter(),
                 new TotalWeightSplitter(),
                 new DeadHeadOriginSplitter(),
                 new PostSetterSplitter()
