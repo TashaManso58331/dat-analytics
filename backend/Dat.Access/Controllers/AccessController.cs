@@ -16,16 +16,16 @@ namespace Dat.Access.Controllers
         private readonly ILogger<AccessController> _logger;
         private readonly SimpleMemoryCache<AccessToken> serviceTokenCache;
         private readonly SimpleMemoryCache<AccessToken> userTokenCache;
-        private readonly IDatClient datClient;
+        private readonly IDatService datClient;
         private readonly string sessionAccount;
         private readonly string sessionPassword;
         private readonly string userAccount;
 
-        private const string cSessionAccount = "Dat:SessionAccount";
-        private const string cSessionPassword = "Dat:SessionPassword";
-        private const string cUserAccount = "Dat:UserAccount";
+        public const string cSessionAccount = "Dat:SessionAccount";
+        public const string cSessionPassword = "Dat:SessionPassword";
+        public const string cUserAccount = "Dat:UserAccount";
 
-        public AccessController(ILogger<AccessController> logger, IMemoryCache memoryCache, IConfiguration config, IDatClient datClient)
+        public AccessController(ILogger<AccessController> logger, IMemoryCache memoryCache, IConfiguration config, IDatService datClient)
         {
             this._logger = logger;
             this.serviceTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache);
@@ -37,18 +37,18 @@ namespace Dat.Access.Controllers
         }
 
         [HttpGet]
-        public AccessToken Get()
+        public IActionResult Get()
         {
             try
             {
                 var sessionToken = serviceTokenCache.GetOrCreate(sessionAccount, () => datClient.GetSessionToken(sessionAccount, sessionPassword));
                 var userToken = userTokenCache.GetOrCreate(userAccount, () => datClient.GetUserToken(sessionToken, userAccount));
-                return userToken;
+                return Ok(userToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get user token sessionAccount={0} userAccount={1}");
-                return AccessToken.ErrorAccessToken;
+                return BadRequest(ex.ToString());
             }
         }
     }

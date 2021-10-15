@@ -18,12 +18,11 @@ namespace Dat.Access.Caches
             if (!_cache.TryGetValue(key, out cacheEntry)) 
             {
                 cacheEntry = createItem();
-                var dateTimeOffset = cacheEntry.GetExpiry() - DateTime.Now;
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                             // Set cache entry size by extension method.
                             .SetSize(1)
                             // Keep in cache for this time, reset time if accessed.
-                            .SetAbsoluteExpiration(dateTimeOffset);
+                            .SetAbsoluteExpiration(cacheEntry.GetExpiry());
                 _cache.Set(key, cacheEntry, cacheEntryOptions);
             }
             return cacheEntry;

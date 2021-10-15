@@ -27,8 +27,11 @@ namespace Dat.Access
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dat.Access", Version = "v1" });
             });
+            services.AddMemoryCache();
             services.AddSingleton<DatMemoryCache>();
-            services.AddScoped<IDatClient, DatClient>();
+            services.AddScoped<IDatService, DatService>();
+            services.AddHttpClient();
+            services.AddHttpClient<DatService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
