@@ -1,4 +1,5 @@
 using Dat.Access.Caches;
+using Dat.Access.Clients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +10,7 @@ using Microsoft.OpenApi.Models;
 namespace Dat.Access
 {
     public class Startup
-    {
+    {       
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,6 +28,7 @@ namespace Dat.Access
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dat.Access", Version = "v1" });
             });
             services.AddSingleton<DatMemoryCache>();
+            services.AddScoped<IDatClient, DatClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

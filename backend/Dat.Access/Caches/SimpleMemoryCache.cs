@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Dat.Model;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 
 namespace Dat.Access.Caches
 {
-    public class SimpleMemoryCache<TItem>
+    public class SimpleMemoryCache<TItem> where TItem : IAccessToken
     {
         private IMemoryCache _cache;
         public SimpleMemoryCache(IMemoryCache cache)
@@ -14,13 +15,16 @@ namespace Dat.Access.Caches
         public TItem GetOrCreate(object key, Func<TItem> createItem)
         {
             TItem cacheEntry;
-            if (!_cache.TryGetValue(key, out cacheEntry)) // Ищем ключ в кэше.
+            if (!_cache.TryGetValue(key, out cacheEntry)) 
             {
-                // Ключ отсутствует в кэше, поэтому получаем данные.
                 cacheEntry = createItem();
-
-                // Сохраняем данные в кэше. 
-                _cache.Set(key, cacheEntry);
+                var dateTimeOffset = cacheEntry.GetExpiry() - DateTime.Now;
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            // Set cache entry size by extension method.
+                            .SetSize(1)
+                            // Keep in cache for this time, reset time if accessed.
+                            .SetAbsoluteExpiration(dateTimeOffset);
+                _cache.Set(key, cacheEntry, cacheEntryOptions);
             }
             return cacheEntry;
         }
