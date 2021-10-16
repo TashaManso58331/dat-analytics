@@ -6,7 +6,7 @@ namespace WeParser.Tests
     public class HeuristicsTests
     {
         [TestMethod]
-        public void Load()
+        public void     Load()
         {
             var data = TestUtils.Utils.GetTestData();
             Assert.AreEqual(500, data.matchDetails.Count);
