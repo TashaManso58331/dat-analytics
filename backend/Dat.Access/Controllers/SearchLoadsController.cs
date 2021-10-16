@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace Dat.Access.Controllers
 {
@@ -25,12 +26,12 @@ namespace Dat.Access.Controllers
         }
 
         [HttpGet]
-        public String Get()
+        public async Task<AccessToken> Get()
         {
             try
             {
                 var userToken = userTokenCache.GetOrCreate(userAccount, () => throw new ArgumentException("User token is not in cache"));
-                return userToken?.Token;
+                return userToken;
             }
             catch (Exception ex)
             {
