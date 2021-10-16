@@ -4,6 +4,10 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.Json;
+using static Dat.Model.AccessToken;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Dat.Access.Clients
 {
@@ -17,16 +21,20 @@ namespace Dat.Access.Clients
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             
             client.BaseAddress = new Uri("https://identity.api.dat.com/access/v1/");
-            client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+            client.DefaultRequestHeaders
+                  .Accept
+                  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
             Client = client;
         }
 
-        public async Task<AccessToken> GetSessionToken(string sessionAccount, string sessionPassword)
+        [return: NotNull]
+        public async Task<AccessToken> GetSessionToken([NotNull] string sessionAccount, [NotNull] string sessionPassword)
         {
             try
             {
+                Client.DefaultRequestHeaders.Authorization = null;
                 var requestBody = Newtonsoft.Json.JsonConvert.SerializeObject(new { username = sessionAccount, password = sessionPassword });
-                var response = await Client.PostAsync("/token/organization", new StringContent(requestBody));
+                var response = await Client.PostAsync("token/organization", new StringContent(requestBody, Encoding.UTF8, "application/json"));
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
                 var parsedResponse = await JsonSerializer.DeserializeAsync<Response>(responseStream);
@@ -40,9 +48,26 @@ namespace Dat.Access.Clients
             }
         }
 
-        public AccessToken GetUserToken(AccessToken sessionToken, string userAccount)
+        [return: NotNull]
+        public async Task<AccessToken> GetUserToken([NotNull] AccessToken sessionToken, [NotNull] string userAccount)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessionToken.Token);
+
+                var requestBody = Newtonsoft.Json.JsonConvert.SerializeObject(new { username = userAccount });
+                var response = await Client.PostAsync("token/user", new StringContent(requestBody, Encoding.UTF8, "application/json"));
+                response.EnsureSuccessStatusCode();
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var parsedResponse = await JsonSerializer.DeserializeAsync<Response>(responseStream);
+
+                return AccessToken.From(parsedResponse);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Failed to get session token for {0}", userAccount);
+                throw;
+            }
         }
     }
 }

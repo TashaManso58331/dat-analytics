@@ -1,6 +1,7 @@
 ﻿using Dat.Model;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Threading.Tasks;
 
 namespace Dat.Access.Caches
 {
@@ -12,12 +13,15 @@ namespace Dat.Access.Caches
             this._cache = cache;
         }
 
-        public TItem GetOrCreate(object key, Func<TItem> createItem)
+        public TItem GetOrCreate(object key, Func<Task<TItem>> createItem)
         {
             TItem cacheEntry;
-            if (!_cache.TryGetValue(key, out cacheEntry)) 
+            if (!_cache.TryGetValue(key, out cacheEntry))
             {
-                cacheEntry = createItem();
+                cacheEntry = Task.Run(async () => await createItem())
+                    .ConfigureAwait(false)
+                    .GetAwaiter()
+                    .GetResult();
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                             // Set cache entry size by extension method.
                             .SetSize(1)

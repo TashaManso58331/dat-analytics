@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Globalization;
 
 namespace Dat.Model
 {
@@ -25,24 +27,29 @@ namespace Dat.Model
             return Expiry;
         }
 
-        public static AccessToken From(Response parsedResponse)
+        public static AccessToken From(Response response)
         {
-            DateTime.TryParse(parsedResponse.expiresWhen, 
-
-            return CreateToken(parsedResponse.accessToken, )
-            return new AccessToken
+            if (DateTime.TryParse(response.expiresWhen, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime parsedExpiresWhen))
             {
-                Token = parsedResponse.accessToken,
-                State = StateEnum.Success,
-                
-                
-            };
+                return CreateToken(response.accessToken, parsedExpiresWhen);
+            }
+            throw new Exception($"Failed to parse repsonse={response}");
         }
 
         public class Response
         {
             public string accessToken { get; set; }
-            public DateTime expiresWhen { get; set; }
+            public string expiresWhen { get; set; }
+
+            public override string ToString()
+            {
+                return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            }
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

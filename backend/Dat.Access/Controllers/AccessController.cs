@@ -1,6 +1,7 @@
 ﻿using Dat.Access.Caches;
 using Dat.Access.Clients;
 using Dat.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +38,7 @@ namespace Dat.Access.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult Get()
         {
             try
             {
