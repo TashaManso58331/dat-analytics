@@ -6,20 +6,15 @@ namespace Dat.Model
 {
     public class AccessToken : IAccessToken
     {
-        public enum StateEnum { Success, Error};
-
         public readonly string Token;
         public readonly DateTime Expiry;
-        public readonly StateEnum State;
 
-        public static AccessToken CreateToken(string token, DateTime expiry) => new(token, expiry, StateEnum.Success);
-        public static AccessToken CreateError(string message) => new(message, DateTime.Now, StateEnum.Error);
+        public static AccessToken CreateToken(string token, DateTime expiry) => new(token, expiry);
 
-        private AccessToken(string token, DateTime expiry, StateEnum state)
+        private AccessToken(string token, DateTime expiry)
         {
             Token = token ?? throw new ArgumentNullException(nameof(token));
             Expiry = expiry;
-            State = state;
         }
 
         public DateTime GetExpiry()
@@ -33,7 +28,7 @@ namespace Dat.Model
             {
                 return CreateToken(response.accessToken, parsedExpiresWhen);
             }
-            throw new Exception($"Failed to parse repsonse={response}");
+            throw new ArgumentException($"Failed to parse repsonse={response}");
         }
 
         public class Response

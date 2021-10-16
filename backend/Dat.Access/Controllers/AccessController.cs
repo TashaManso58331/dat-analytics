@@ -1,7 +1,6 @@
 ﻿using Dat.Access.Caches;
 using Dat.Access.Clients;
 using Dat.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +13,7 @@ namespace Dat.Access.Controllers
     [ApiController]
     public class AccessController : ControllerBase
     {
-        private readonly ILogger<AccessController> _logger;
+        private readonly ILogger<AccessController> log;
         private readonly SimpleMemoryCache<AccessToken> serviceTokenCache;
         private readonly SimpleMemoryCache<AccessToken> userTokenCache;
         private readonly IDatService datClient;
@@ -28,7 +27,7 @@ namespace Dat.Access.Controllers
 
         public AccessController(ILogger<AccessController> logger, IMemoryCache memoryCache, IConfiguration config, IDatService datClient)
         {
-            this._logger = logger;
+            this.log = logger;
             this.serviceTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache);
             this.userTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache);
             this.datClient = datClient;
@@ -38,18 +37,18 @@ namespace Dat.Access.Controllers
         }
 
         [HttpGet]
-        public ActionResult Get()
+        public String Get()
         {
             try
             {
                 var sessionToken = serviceTokenCache.GetOrCreate(sessionAccount, () => datClient.GetSessionToken(sessionAccount, sessionPassword));
                 var userToken = userTokenCache.GetOrCreate(userAccount, () => datClient.GetUserToken(sessionToken, userAccount));
-                return Ok(userToken);
+                return userToken?.Token;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to get user token sessionAccount={0} userAccount={1}");
-                return BadRequest(ex.ToString());
+                log.LogError(ex, "Failed to get user token sessionAccount={0} userAccount={1}");
+                throw;
             }
         }
     }
