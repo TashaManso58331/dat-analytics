@@ -15,22 +15,21 @@ namespace Dat.Access.Controllers
     public class SearchLoadsController : ControllerBase
     {
         private readonly ILogger<SearchLoadsController> log;
-        private readonly SimpleMemoryCache<AccessToken> userTokenCache;
-        private readonly string userAccount;
+        private readonly IDatService datClient;
 
-        public SearchLoadsController(ILogger<SearchLoadsController> logger, IMemoryCache memoryCache, IConfiguration config, IDatService datClient)
+        public SearchLoadsController(ILogger<SearchLoadsController> logger, IDatService datClient)
         {
             this.log = logger;
-            this.userTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache);
-            this.userAccount = config[AccessController.cUserAccount] ?? throw new ArgumentNullException(AccessController.cUserAccount);
+            this.datClient = datClient;
         }
 
         [HttpGet]
-        public async Task<AccessToken> Get()
+        public async Task<string> Get()
         {
             try
             {
-                var userToken = userTokenCache.GetOrCreate(userAccount, () => throw new ArgumentException("User token is not in cache"));
+                var userToken = datClient.GetAllTokens();
+
                 return userToken;
             }
             catch (Exception ex)

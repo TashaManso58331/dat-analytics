@@ -7,5 +7,6 @@ namespace Dat.Access.Clients
     {
         Task<AccessToken> GetSessionToken(string sessionAccount, string sessionPassword);
         Task<AccessToken> GetUserToken(AccessToken sessionToken, string userAccount);
+        string GetAllTokens();
     }
 }

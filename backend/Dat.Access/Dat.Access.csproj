@@ -15,4 +15,8 @@
     <ProjectReference Include="..\DatModel\Dat.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Loads\" />
+  </ItemGroup>
+
 </Project>
