@@ -25,9 +25,9 @@ namespace Dat.Access.Test
         [SetUp]
         public void SetUp()
         {
-            Mock.Get(config).Setup(p => p[AccessController.cSessionAccount]).Returns("SessionAccount");
-            Mock.Get(config).Setup(p => p[AccessController.cSessionPassword]).Returns("SessionPassword");
-            Mock.Get(config).Setup(p => p[AccessController.cUserAccount]).Returns("UserAccount");
+            Mock.Get(config).Setup(p => p[DatService.cSessionAccount]).Returns("SessionAccount");
+            Mock.Get(config).Setup(p => p[DatService.cSessionPassword]).Returns("SessionPassword");
+            Mock.Get(config).Setup(p => p[DatService.cUserAccount]).Returns("UserAccount");
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Dat.Access.Test
             Mock.Get(datClient).Setup(p => p.GetUserToken(goodSessionToken, It.IsAny<string>())).Returns(Task.FromResult(goodUserToken));
             Mock.Get(memoryCache).Setup(p => p.CreateEntry((It.IsAny<object>()))).Returns(cachEntry);
             
-            var controller = new AccessController(log, memoryCache, config, datClient);
+            var controller = new AccessController(datClient);
             var accessToken = controller.Get();
 
             Assert.False(string.IsNullOrEmpty(accessToken));
@@ -52,7 +52,7 @@ namespace Dat.Access.Test
             Mock.Get(datClient).Setup(p => p.GetUserToken(goodSessionToken, It.IsAny<string>())).Returns(Task.FromResult(goodUserToken));
             Mock.Get(memoryCache).Setup(p => p.CreateEntry((It.IsAny<object>()))).Returns(cachEntry);
 
-            var controller = new AccessController(log, memoryCache, config, datClient);
+            var controller = new AccessController(datClient);
             Assert.Throws<HttpRequestException>(() => controller.Get());
         }
 
@@ -64,7 +64,7 @@ namespace Dat.Access.Test
             Mock.Get(datClient).Setup(p => p.GetUserToken(goodSessionToken, It.IsAny<string>())).Throws(new HttpRequestException());
             Mock.Get(memoryCache).Setup(p => p.CreateEntry((It.IsAny<object>()))).Returns(cachEntry);
 
-            var controller = new AccessController(log, memoryCache, config, datClient);
+            var controller = new AccessController(datClient);
             Assert.Throws<HttpRequestException>(() => controller.Get());
         }
     }

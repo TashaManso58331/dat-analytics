@@ -1,11 +1,9 @@
-﻿using Dat.Access.Caches;
-using Dat.Access.Clients;
-using Dat.Model;
+﻿using Dat.Access.Clients;
+using Dat.Access.Loads;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Dat.Access.Controllers
@@ -16,21 +14,24 @@ namespace Dat.Access.Controllers
     {
         private readonly ILogger<SearchLoadsController> log;
         private readonly IDatService datClient;
+        private readonly ISearchService searchService;
 
-        public SearchLoadsController(ILogger<SearchLoadsController> logger, IDatService datClient)
+        public SearchLoadsController(ILogger<SearchLoadsController> logger, IDatService datClient, ISearchService searchService)
         {
             this.log = logger;
             this.datClient = datClient;
+            this.searchService = searchService;
         }
 
         [HttpGet]
-        public async Task<string> Get()
+        public async Task<List<Load>> Get()
         {
             try
             {
                 var userToken = datClient.GetAllTokens();
-
-                return userToken;
+                var filter = SearchRequest.Create();
+                var loads = await searchService.Search(filter);
+                return loads;
             }
             catch (Exception ex)
             {
