@@ -3,7 +3,6 @@ using System;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Text.Json;
 using static Dat.Model.AccessToken;
 using System.Net.Http.Headers;
 using System.Text;
@@ -47,7 +46,7 @@ namespace Dat.Access.Clients
         }
 
         [return: NotNull]
-        public async Task<AccessToken> GetSessionToken([NotNull] string sessionAccount, [NotNull] string sessionPassword)
+        public async Task<AccessToken> GetSessionToken()
         {
             try
             {
@@ -56,7 +55,7 @@ namespace Dat.Access.Clients
                 var response = await Client.PostAsync("token/organization", new StringContent(requestBody, Encoding.UTF8, "application/json"));
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var parsedResponse = await JsonSerializer.DeserializeAsync<Response>(responseStream);
+                var parsedResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<Response>(responseStream);
 
                 return AccessToken.From(parsedResponse);
             }
@@ -78,7 +77,7 @@ namespace Dat.Access.Clients
                 var response = await Client.PostAsync("token/user", new StringContent(requestBody, Encoding.UTF8, "application/json"));
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var parsedResponse = await JsonSerializer.DeserializeAsync<Response>(responseStream);
+                var parsedResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<Response>(responseStream);
 
                 return AccessToken.From(parsedResponse);
             }
@@ -93,7 +92,7 @@ namespace Dat.Access.Clients
         {
             try
             {
-                var sessionToken = serviceTokenCache.GetOrCreate(sessionAccount, () => this.GetSessionToken(sessionAccount, sessionPassword));
+                var sessionToken = serviceTokenCache.GetOrCreate(sessionAccount, () => this.GetSessionToken());
                 var userToken = userTokenCache.GetOrCreate(userAccount, () => this.GetUserToken(sessionToken, userAccount));
                 return userToken?.Token;
             }

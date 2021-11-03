@@ -1,5 +1,6 @@
 using Dat.Access.Caches;
 using Dat.Access.Clients;
+using Dat.Access.Loads;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -30,8 +31,10 @@ namespace Dat.Access
             services.AddMemoryCache();
             services.AddSingleton<DatMemoryCache>();
             services.AddScoped<IDatService, DatService>();
+            services.AddScoped<ISearchService, SearchService>();
             services.AddHttpClient();
             services.AddHttpClient<DatService>();
+            services.AddHttpClient<SearchService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

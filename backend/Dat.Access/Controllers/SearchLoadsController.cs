@@ -1,5 +1,6 @@
 ﻿using Dat.Access.Clients;
 using Dat.Access.Loads;
+using Dat.Access.Loads.Request;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -29,9 +30,11 @@ namespace Dat.Access.Controllers
             try
             {
                 var userToken = datClient.GetAllTokens();
-                var filter = SearchRequest.Create();
-                var loads = await searchService.Search(filter);
-                return loads;
+                var filter = SearchRequestBuilder.NewBuilder()
+                    .Build();
+                var search = await searchService.CreateSearch(userToken, filter);
+
+                return new List<Load>();
             }
             catch (Exception ex)
             {
