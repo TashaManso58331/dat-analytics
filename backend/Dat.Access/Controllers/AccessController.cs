@@ -1,6 +1,7 @@
 ﻿using Dat.Access.Clients;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace Dat.Access.Controllers
 {
@@ -16,9 +17,9 @@ namespace Dat.Access.Controllers
         }
 
         [HttpGet]
-        public String Get()
+        public async Task<String> Get()
         {
-            return datClient.GetAllTokens();
+            return await datClient.GetAllTokens();
         }
     }
 }

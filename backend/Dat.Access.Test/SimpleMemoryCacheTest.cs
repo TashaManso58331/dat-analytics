@@ -1,5 +1,7 @@
 ﻿using Dat.Access.Caches;
 using Dat.Model;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -11,10 +13,12 @@ namespace Dat.Access.Test
     [TestFixture]
     class SimpleMemoryCacheTest
     {
+        private ILogger log = Mock.Of<ILogger>();
+
         [Test]
         public void ShouldBeCalledOnce()
         {
-            var simpleMemoryCache = new Caches.SimpleMemoryCache<Model.AccessToken>(new DatMemoryCache().Cache);
+            var simpleMemoryCache = new Caches.SimpleMemoryCache<Model.AccessToken>(new DatMemoryCache().Cache, log, "prefix");
 
             int counter = 0;
 

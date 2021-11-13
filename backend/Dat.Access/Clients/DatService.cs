@@ -38,11 +38,13 @@ namespace Dat.Access.Clients
                   .Accept
                   .Add(new MediaTypeWithQualityHeaderValue("application/json"));
             Client = client;
-            this.serviceTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache);
-            this.userTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache);
+            this.serviceTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache, log, nameof(serviceTokenCache));
+            this.userTokenCache = new SimpleMemoryCache<AccessToken>(memoryCache, log, nameof(userTokenCache));
             this.sessionAccount = config[cSessionAccount] ?? throw new ArgumentNullException(cSessionAccount);
             this.sessionPassword = config[cSessionPassword] ?? throw new ArgumentNullException(cSessionPassword);
             this.userAccount = config[cUserAccount] ?? throw new ArgumentNullException(cUserAccount);
+            
+            RestoreCachedTokens();
         }
 
         [return: NotNull]
@@ -88,12 +90,19 @@ namespace Dat.Access.Clients
             }
         }
 
-        public string GetAllTokens()
+        public async Task<string> GetAllTokens()
         {
             try
             {
-                var sessionToken = serviceTokenCache.GetOrCreate(sessionAccount, () => this.GetSessionToken());
-                var userToken = userTokenCache.GetOrCreate(userAccount, () => this.GetUserToken(sessionToken, userAccount));
+                var userToken = await Task.Run(() =>
+                {
+                    var sessionToken = serviceTokenCache.GetOrCreate(sessionAccount, () => this.GetSessionToken());
+                    return userTokenCache.GetOrCreate(userAccount, () => this.GetUserToken(sessionToken, userAccount));
+                });
+
+                await serviceTokenCache.SaveState();
+                await userTokenCache.SaveState();
+                
                 return userToken?.Token;
             }
             catch (Exception ex)
@@ -101,6 +110,12 @@ namespace Dat.Access.Clients
                 log.LogError(ex, "Failed to get user token sessionAccount={0} userAccount={1}");
                 throw;
             }
+        }
+
+        public void RestoreCachedTokens()
+        {
+            serviceTokenCache.LoadState();
+            userTokenCache.LoadState();
         }
     }
 }

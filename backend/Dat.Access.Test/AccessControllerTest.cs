@@ -31,7 +31,7 @@ namespace Dat.Access.Test
         }
 
         [Test]
-        public void ShouldReturnAccessToken()
+        public async Task ShouldReturnAccessToken()
         {
 
             Mock.Get(datService).Setup(p => p.GetSessionToken()).Returns(Task.FromResult(goodSessionToken));
@@ -39,7 +39,7 @@ namespace Dat.Access.Test
             Mock.Get(memoryCache).Setup(p => p.CreateEntry((It.IsAny<object>()))).Returns(cachEntry);
             
             var controller = new AccessController(datService);
-            var accessToken = controller.Get();
+            var accessToken = await controller.Get();
 
             Assert.False(string.IsNullOrEmpty(accessToken));
         }

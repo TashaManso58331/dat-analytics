@@ -6,10 +6,12 @@ namespace Dat.Model
 {
     public class AccessToken : IAccessToken
     {
-        public readonly string Token;
-        public readonly DateTime Expiry;
+        public string Token { get; set; }
+        public DateTime Expiry { get; set; }
 
         public static AccessToken CreateToken(string token, DateTime expiry) => new(token, expiry);
+
+        public AccessToken() { }
 
         private AccessToken(string token, DateTime expiry)
         {
