@@ -26,8 +26,14 @@ namespace Dat.Access.Test
             Mock.Get(config).Setup(p => p[DatService.cSessionPassword]).Returns("BlahBlah");
             Mock.Get(config).Setup(p => p[DatService.cUserAccount]).Returns("dmitry.okatenko@gmail.com");
 
+            var builder = new ConfigurationBuilder()
+                .AddUserSecrets<SearchServiceTest>();
+
+            var configuration = builder.Build();
+
             searchService = new SearchService(searchServiceLog, new HttpClient());
-            datClient = new DatService(datServiceLog, new HttpClient(), new DatMemoryCache().Cache, config);
+            datClient = new DatService(datServiceLog, new HttpClient(), new DatMemoryCache().Cache, configuration);
+
         }
 
         [Test]
@@ -36,8 +42,10 @@ namespace Dat.Access.Test
             datClient.RestoreCachedTokens();
             var userToken = await datClient.GetAllTokens();
             Loads.Request.SearchRequest searchRequest = Loads.Request.SearchRequestBuilder.NewBuilder().TestBuild();
-            var response = await searchService.CreateSearch(userToken, searchRequest);
-            Assert.NotNull(response);
+            var searchResponse = await searchService.CreateSearch(userToken, searchRequest);
+            var matchResponse = await searchService.GetMatches(userToken, searchResponse.id);
+
+            matchResponse = await searchService.GetMatches(userToken, searchResponse.id);
         }
     }
 }

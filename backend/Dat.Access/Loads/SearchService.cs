@@ -7,6 +7,7 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 using Dat.Access.Loads.Response;
+using Dat.Access.Loads.Matches;
 
 namespace Dat.Access.Loads
 {
@@ -47,5 +48,25 @@ namespace Dat.Access.Loads
                 throw;
             }
         }
+
+        public async Task<List<MatchesResponse>> GetMatches(string acessToken, string searchId)
+        {
+            try
+            {
+                Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", acessToken);
+
+                var response = await Client.GetAsync($"loads/{searchId}/matches?limit=500&lookbackMinutes=1");
+                response.EnsureSuccessStatusCode();
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var matchesResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<List<MatchesResponse>>(responseStream);
+                return matchesResponse;
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Failed to get matches for {0}", searchId);
+                throw;
+            }
+        }
+
     }
 }

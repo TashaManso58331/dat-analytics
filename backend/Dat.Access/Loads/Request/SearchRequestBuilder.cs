@@ -89,11 +89,11 @@ namespace Dat.Access.Loads.Request
                             zones = new List<string> { "Z1" }
                         }
                     },
-                    maxAgeInMinutes = 360,
+                    maxAgeInMinutes = 5940,
                     availability = new Availability()
                     {
-                        earliest = DateTime.UtcNow.AddHours(-6).ToString("O"),
-                        latest = DateTime.UtcNow.AddHours(1).ToString("O"),
+                        earliest = DateTime.UtcNow.AddHours(-1).ToString("O"),
+                        latest = DateTime.UtcNow.AddHours(24).ToString("O"),
                     }
                 }
             };
