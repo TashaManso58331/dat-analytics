@@ -14,7 +14,7 @@ namespace Dat.Access.Loads.Matches
 
     public class Deadhead
     {
-        public int miles { get; set; }
+        public double miles { get; set; }
         public string type { get; set; }
     }
 
@@ -41,8 +41,8 @@ namespace Dat.Access.Loads.Matches
     {
         public string requiredEquipmentType { get; set; }
         public string requiredCapacity { get; set; }
-        public int lengthInFeet { get; set; }
-        public int weightInPounds { get; set; }
+        public double lengthInFeet { get; set; }
+        public double weightInPounds { get; set; }
     }
 
     public class Comment
@@ -52,7 +52,7 @@ namespace Dat.Access.Loads.Matches
 
     public class BaseRate
     {
-        public int amount { get; set; }
+        public double amount { get; set; }
         public string currency { get; set; }
     }
 
@@ -72,7 +72,7 @@ namespace Dat.Access.Loads.Matches
     public class TripLength
     {
         public string type { get; set; }
-        public int distanceMiles { get; set; }
+        public double distanceMiles { get; set; }
     }
 
     public class Phone
@@ -102,7 +102,7 @@ namespace Dat.Access.Loads.Matches
         public string version { get; set; }
         public string matchId { get; set; }
         public string status { get; set; }
-        public int relevance { get; set; }
+        public double relevance { get; set; }
         public DateTime createdWhen { get; set; }
         public DateTime modifiedWhen { get; set; }
         public Availability availability { get; set; }
