@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dat.Model;
+using System;
 using System.Collections.Generic;
 
 namespace Dat.Access.Loads.Response
@@ -63,7 +64,7 @@ namespace Dat.Access.Loads.Response
         public Availability availability { get; set; }
     }
 
-    public class SearchResponse
+    public class SearchResponse : IAccessToken
     {
         public string id { get; set; }
         public string version { get; set; }
@@ -73,6 +74,11 @@ namespace Dat.Access.Loads.Response
         public DateTime createdWhen { get; set; }
         public DateTime modifiedWhen { get; set; }
         public DateTime expiresWhen { get; set; }
+
+        public DateTime GetExpiry()
+        {
+            return expiresWhen;
+        }
     }
 
 }

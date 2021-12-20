@@ -56,7 +56,7 @@ namespace Dat.Access.Loads.Request
             };
         }
 
-        public SearchRequest TestBuild()
+        public SearchRequest TestBuild(DateTime utcNow)
         {
             return new SearchRequest
             {
@@ -92,8 +92,8 @@ namespace Dat.Access.Loads.Request
                     maxAgeInMinutes = 5940,
                     availability = new Availability()
                     {
-                        earliest = DateTime.UtcNow.AddHours(-1).ToString("O"),
-                        latest = DateTime.UtcNow.AddHours(24).ToString("O"),
+                        earliest = utcNow.AddHours(-1).ToString("O"),
+                        latest = utcNow.AddHours(24).ToString("O"),
                     }
                 }
             };

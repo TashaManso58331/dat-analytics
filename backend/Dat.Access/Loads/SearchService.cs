@@ -6,8 +6,9 @@ using System.Net.Http.Headers;
 using System;
 using System.Text;
 using Newtonsoft.Json;
-using Dat.Access.Loads.Response;
 using Dat.Access.Loads.Matches;
+using Microsoft.Extensions.Caching.Memory;
+using Dat.Access.Caches;
 
 namespace Dat.Access.Loads
 {
@@ -15,8 +16,9 @@ namespace Dat.Access.Loads
     {
         private readonly ILogger<SearchService> log;
         public HttpClient Client { get; }
+        private readonly SimpleMemoryCache<Response.SearchResponse> searchResponseCache;
 
-        public SearchService(ILogger<SearchService> log, HttpClient client)
+        public SearchService(ILogger<SearchService> log, HttpClient client, IMemoryCache memoryCache)
         { 
             this.log = log;
             client.BaseAddress = new Uri("https://freight.api.prod.dat.com/search/v1/");
@@ -24,9 +26,26 @@ namespace Dat.Access.Loads
                   .Accept
                   .Add(new MediaTypeWithQualityHeaderValue("application/json"));
             Client = client;
+            this.searchResponseCache = new SimpleMemoryCache<Response.SearchResponse>(memoryCache, log, nameof(Response.SearchResponse));
         }
 
-        public async Task<SearchResponse> CreateSearch(string acessToken, Request.SearchRequest searchCriteria)
+        public async Task<Response.SearchResponse> GetSearchResponse(string acessToken, Request.SearchRequest searchCriteria)
+        {
+            try
+            {
+                var searchResponse = await Task.Run(() => searchResponseCache.GetOrCreate(searchCriteria.GetHashCode(), () => CreateSearch(acessToken, searchCriteria)));
+
+                await searchResponseCache.SaveState();
+                return searchResponse;
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Failed to get searchResponse for searchRequest={0}", searchCriteria);
+                throw;
+            }
+        }
+
+        private async Task<Response.SearchResponse> CreateSearch(string acessToken, Request.SearchRequest searchCriteria)
         {
             try
             {

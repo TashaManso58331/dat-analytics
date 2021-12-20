@@ -32,7 +32,7 @@ namespace Dat.Access.Controllers
                 var userToken = await datClient.GetAllTokens();
                 var filter = SearchRequestBuilder.NewBuilder()
                     .Build();
-                var search = await searchService.CreateSearch(userToken, filter);
+                var search = await searchService.GetSearchResponse(userToken, filter);
 
                 return new List<Load>();
             }

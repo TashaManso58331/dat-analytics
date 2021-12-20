@@ -19,7 +19,7 @@ namespace Dat.Access.Test
         private IConfiguration config = Mock.Of<IConfiguration>();
         private IDatService datClient;
 
-         [SetUp]
+        [SetUp]
         public void SetUp()
         {
             Mock.Get(config).Setup(p => p[DatService.cSessionAccount]).Returns("info@dieselmarket.net");
@@ -31,7 +31,7 @@ namespace Dat.Access.Test
 
             var configuration = builder.Build();
 
-            searchService = new SearchService(searchServiceLog, new HttpClient());
+            searchService = new SearchService(searchServiceLog, new HttpClient(), new DatMemoryCache().Cache);
             datClient = new DatService(datServiceLog, new HttpClient(), new DatMemoryCache().Cache, configuration);
 
         }
@@ -41,8 +41,8 @@ namespace Dat.Access.Test
         {
             datClient.RestoreCachedTokens();
             var userToken = await datClient.GetAllTokens();
-            Loads.Request.SearchRequest searchRequest = Loads.Request.SearchRequestBuilder.NewBuilder().TestBuild();
-            var searchResponse = await searchService.CreateSearch(userToken, searchRequest);
+            Loads.Request.SearchRequest searchRequest = Loads.Request.SearchRequestBuilder.NewBuilder().TestBuild(System.DateTime.UtcNow);
+            var searchResponse = await searchService.GetSearchResponse(userToken, searchRequest);
             var matchResponse = await searchService.GetMatches(userToken, searchResponse.id);
 
             matchResponse = await searchService.GetMatches(userToken, searchResponse.id);
